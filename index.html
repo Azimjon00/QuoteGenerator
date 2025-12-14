@@ -1,572 +1,211 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Currency Converter Presentation</title>
+    <title>Quote Generator</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
-            font-family: 'Inter', 'Segoe UI', sans-serif;
-            background: #0f0f1e;
-            overflow: hidden;
-        }
-        
-        .presentation-wrapper {
-            width: 100vw;
-            height: 100vh;
+            background: #2a2a2a;
+            min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            padding: 20px;
         }
-        
-        .slide {
-            display: none;
+
+        .container {
             width: 100%;
-            height: 100%;
-            position: absolute;
-            top: 0;
-            left: 0;
-            opacity: 0;
-            transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            transform: translateX(100px) scale(0.95);
-            overflow-y: auto;
-            padding-bottom: 120px;
+            max-width: 800px;
         }
-        
-        .slide.active {
+
+        .header {
             display: flex;
-            opacity: 1;
-            transform: translateX(0) scale(1);
-            z-index: 10;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 60px;
         }
-        
-        .slide.prev {
-            transform: translateX(-100px) scale(0.95);
-        }
-        
-        .slide-1 {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+
+        .icon-btn {
+            width: 40px;
+            height: 40px;
+            background: #00BCD4;
+            border: none;
+            border-radius: 8px;
+            display: flex;
             align-items: center;
             justify-content: center;
-            flex-direction: column;
-            text-align: center;
-        }
-        
-        .slide-1::before {
-            content: '';
-            position: absolute;
-            width: 400px;
-            height: 400px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            top: -100px;
-            right: -100px;
-            filter: blur(50px);
-        }
-        
-        .slide-1::after {
-            content: '';
-            position: absolute;
-            width: 300px;
-            height: 300px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 50%;
-            bottom: -50px;
-            left: -50px;
-            filter: blur(50px);
-        }
-        
-        .logo-container {
-            position: absolute;
-            top: 40px;
-            right: 40px;
-            z-index: 10;
-        }
-        
-        .logo-container img {
-            width: 140px;
-            height: 140px;
-            border-radius: 15px;
-            background: rgba(255, 255, 255, 0.2);
-            padding: 8px;
-            backdrop-filter: blur(10px);
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-        }
-        
-        .title-content {
-            position: relative;
-            z-index: 1;
-            animation: slideUp 1s ease-out;
-        }
-        
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(40px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .title-content h1 {
-            font-size: 72px;
-            font-weight: 900;
-            color: white;
-            margin-bottom: 20px;
-            text-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-        }
-        
-        .title-content p {
-            font-size: 28px;
-            color: rgba(255, 255, 255, 0.95);
-            margin-bottom: 60px;
-            font-weight: 300;
-        }
-        
-        .author-box {
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(10px);
-            padding: 40px 60px;
-            border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-        }
-        
-        .author-box p {
+            cursor: pointer;
             font-size: 20px;
-            color: white;
-            margin: 12px 0;
+            transition: all 0.3s ease;
+        }
+
+        .icon-btn:hover {
+            background: #00ACC1;
+        }
+
+        .quote-card {
+            background: white;
+            border-radius: 12px;
+            padding: 60px 48px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+            text-align: center;
+            min-height: 320px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .quote-content {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .quote-text {
+            font-size: 26px;
+            font-weight: 700;
+            color: #1a1a1a;
+            line-height: 1.5;
+            letter-spacing: 0.2px;
+        }
+
+        .quote-author {
+            font-size: 16px;
+            color: #666;
             font-weight: 500;
         }
-        
-        .slide-2, .slide-3, .slide-4, .slide-5, .slide-6 {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            padding: 45px 60px;
-            flex-direction: column;
-            justify-content: flex-start;
-            align-items: center;
-        }
-        
-        .slide-2 { justify-content: center; }
-        
-        .slide-content {
-            max-width: 950px;
-            width: 100%;
-            animation: fadeInUp 0.8s ease-out 0.2s both;
-        }
-        
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .slide-2 h2, .slide-3 h2, .slide-4 h2, .slide-5 h2, .slide-6 h2 {
-            font-size: 48px;
-            color: #667eea;
-            margin-bottom: 25px;
-            font-weight: 800;
-            align-self: flex-start;
-            width: 100%;
-        }
-        
-        .slide-2 p {
-            font-size: 20px;
-            color: #e0e0e0;
-            margin-bottom: 25px;
-            line-height: 1.6;
-        }
-        
-        .slide-3 p, .slide-4 p, .slide-5 p, .slide-6 p {
-            font-size: 18px;
-            color: #d0d0d0;
-            margin-bottom: 20px;
-            line-height: 1.6;
-        }
-        
-        .features-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-top: 25px;
-        }
-        
-        .feature-item {
-            background: rgba(102, 126, 234, 0.1);
-            border-left: 4px solid #667eea;
-            padding: 20px;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-        }
-        
-        .feature-item:hover {
-            background: rgba(102, 126, 234, 0.2);
-            transform: translateX(10px);
-        }
-        
-        .feature-item span { font-size: 28px; margin-right: 12px; }
-        .feature-item p { margin: 0; font-size: 16px; color: #c0c0c0; }
-        
-        .code-block {
-            background: #0f0f1e;
-            border: 1px solid #667eea;
-            border-radius: 12px;
-            padding: 20px;
-            overflow-x: auto;
-            margin: 12px 0;
-            font-family: 'Courier New', monospace;
-            font-size: 13px;
-            line-height: 1.7;
-            color: #00ff88;
-            box-shadow: 0 0 20px rgba(102, 126, 234, 0.1);
-        }
-        
-        .code-block code { display: block; white-space: pre; }
-        .code-comment { color: #888888; }
-        
-        .code-explanation {
-            background: rgba(102, 126, 234, 0.12);
-            border-left: 3px solid #667eea;
-            padding: 15px 20px;
-            margin: 12px 0;
-            border-radius: 6px;
-            font-size: 15px;
-            color: #d0d0d0;
-            line-height: 1.6;
-        }
-        
-        .code-explanation strong { color: #667eea; }
-        .code-subtitle { color: #b0b0b0; margin: 12px 0 10px 0; font-size: 15px; font-weight: 500; }
-        
-        .slide-7 {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
-            flex-direction: column;
+
+        .button-container {
+            display: flex;
             justify-content: center;
-            align-items: center;
-            text-align: center;
-        }
-        
-        .slide-7 h2 { font-size: 64px; color: white; margin-bottom: 30px; font-weight: 900; }
-        .slide-7 p { font-size: 22px; color: rgba(255, 255, 255, 0.95); margin-bottom: 15px; font-weight: 500; }
-        
-        .tech-box {
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 30px 50px;
-            border-radius: 15px;
             margin-top: 40px;
         }
-        
-        .tech-box p { font-size: 17px; margin: 12px 0; color: rgba(255, 255, 255, 0.95); }
-        .thank-you { font-size: 36px; margin-top: 40px; font-weight: 700; color: white; }
-        
-        .controls {
-            position: fixed;
-            bottom: 40px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            align-items: center;
-            gap: 30px;
-            z-index: 100;
-        }
 
-        /* === SLIDE 9 : QR + LOGO === */
-
-.slide-9 {
-    position: relative;
-}
-
-/* Логотип университета */
-.slide-9 .uni-logo {
-    position: absolute;
-    top: 30px;
-    left: 30px;
-    animation: slideInLeft 0.8s ease-out;
-}
-
-.slide-9 .uni-logo img {
-    width: 90px;
-    height: auto;
-}
-
-/* Контейнер QR */
-.qr-wrapper {
-    display: flex;
-    gap: 40px;
-    margin-top: 50px;
-    animation: fadeIn 1s ease-out 0.4s both;
-}
-
-/* Один QR */
-.qr-item {
-    background: rgba(255, 255, 255, 0.15);
-    padding: 25px;
-    border-radius: 14px;
-    text-align: center;
-    backdrop-filter: blur(8px);
-    animation: scaleIn 0.6s ease-out;
-}
-
-/* Анимация по очереди */
-.qr-item:nth-child(1) { animation-delay: 0.2s; }
-.qr-item:nth-child(2) { animation-delay: 0.4s; }
-.qr-item:nth-child(3) { animation-delay: 0.6s; }
-
-.qr-item img {
-    width: 160px;
-    height: 160px;
-    margin-bottom: 15px;
-    border-radius: 10px;
-    background: white;
-    padding: 8px;
-}
-
-/* Подпись */
-.qr-item span {
-    display: block;
-    font-size: 16px;
-    font-weight: 600;
-    opacity: 0.95;
-}
-
-        
-        .nav-btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        .btn-new {
+            background: #00BCD4;
             color: white;
             border: none;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
-        }
-        
-        .nav-btn:hover { transform: scale(1.1); box-shadow: 0 15px 40px rgba(102, 126, 234, 0.6); }
-        .nav-btn:active { transform: scale(0.95); }
-        
-        .dots { display: flex; gap: 12px; }
-        
-        .dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.3);
+            padding: 14px 48px;
+            font-size: 15px;
+            font-weight: 700;
+            border-radius: 6px;
             cursor: pointer;
             transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
         }
-        
-        .dot.active { background: #667eea; width: 30px; border-radius: 6px; box-shadow: 0 0 20px rgba(102, 126, 234, 0.6); }
-        .dot:hover { background: rgba(102, 126, 234, 0.6); }
-        
-        .slide-counter { color: #667eea; font-weight: 600; font-size: 16px; min-width: 40px; text-align: center; }
+
+        .btn-new:hover {
+            background: #00ACC1;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 188, 212, 0.4);
+        }
+
+        .btn-new:active {
+            transform: translateY(0);
+        }
+
+        .credit {
+            margin-top: 12px;
+            font-size: 12px;
+            color: #999;
+        }
     </style>
 </head>
 <body>
-    <div class="presentation-wrapper">
-        <div class="slide slide-1 active">
-            <div class="logo-container">
-                <img src="https://alatoo.edu.kg/wp-content/uploads/2023/10/cropped-ALATOO-LOGO-2.png" alt="Alatoo">
-            </div>
-            <div class="title-content">
-                <h1>💱 Currency Converter</h1>
-                <p>Real-Time Exchange Rate Calculator</p>
-                <div class="author-box">
-                    <p>👨‍💻 <strong>Developed by:</strong> Allonbaev Azimjon</p>
-                    <p>📚 <strong>Group:</strong> SCA-24B</p>
-                    <p>👨‍🏫 <strong>Teacher:</strong> Kubanych Agai (Кубаныч Агай)</p>
+    <div class="container">
+        <div class="header">
+            <button class="icon-btn">→</button>
+        </div>
+
+        <div class="quote-card">
+            <div class="quote-content">
+                <div class="quote-text" id="quoteText">
+                    We have two ears and one mouth so that we can listen twice as much as we speak.
                 </div>
+                <div class="quote-author" id="quoteAuthor">-Epictetus</div>
             </div>
-        </div>
-        
-        <div class="slide slide-2">
-            <div class="slide-content">
-                <h2>📋 Обзор проекта</h2>
-                <p>Современное веб-приложение для конвертации валют с интуитивным интерфейсом и актуальными курсами обмена</p>
-                <div class="features-grid">
-                    <div class="feature-item"><span>💱</span><p><strong>Конвертация</strong> между валютами</p></div>
-                    <div class="feature-item"><span>⚡</span><p><strong>Real-time</strong> обновление курсов</p></div>
-                    <div class="feature-item"><span>🔄</span><p><strong>Swap</strong> функция обмена</p></div>
-                    <div class="feature-item"><span>🌍</span><p><strong>8+ валют</strong> на выбор</p></div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="slide slide-3">
-            <div class="slide-content">
-                <h2>🏗️ HTML структура</h2>
-                <p class="code-subtitle">Семантичная разметка компонентов приложения</p>
-                <div class="code-block"><code><span class="code-comment">// Основной контейнер валюты</span>
-&lt;div class="currency-block"&gt;
-  &lt;div class="currency-left"&gt;
-    &lt;div class="flag"&gt;🇺🇸&lt;/div&gt;
-    &lt;select class="currency-code"&gt;
-      &lt;option&gt;USD&lt;/option&gt;
-      &lt;option&gt;SGD&lt;/option&gt;
-    &lt;/select&gt;
-  &lt;/div&gt;
-  &lt;input type="number" placeholder="0"&gt;
-&lt;/div&gt;
 
-<span class="code-comment">// Кнопка для обмена валют</span>
-&lt;button class="swap-btn"&gt;⇅&lt;/button&gt;</code></div>
-                <div class="code-explanation"><strong>📌 Ключевые моменты:</strong> HTML использует семантичные элементы. Элемент select выбирает валюты, input принимает сумму для конвертации.</div>
+            <div class="button-container">
+                <button class="btn-new" id="newBtn">New</button>
             </div>
-        </div>
-        
-        <div class="slide slide-4">
-            <div class="slide-content">
-                <h2>🎨 CSS стили</h2>
-                <p class="code-subtitle">Современный дизайн с анимациями</p>
-                <div class="code-block"><code><span class="code-comment">/* Главный контейнер */</span>
-.container {
-  width: 100%;
-  background: #ffffff;
-  border-radius: 24px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-}
 
-<span class="code-comment">/* Кнопка свапа */</span>
-.swap-btn {
-  width: 48px;
-  height: 48px;
-  background: #0066ff;
-  border-radius: 50%;
-  transition: transform 0.2s ease;
-}
-
-.swap-btn:hover {
-  transform: scale(1.05);
-}</code></div>
-                <div class="code-explanation"><strong>✨ Особенности:</strong> Плавные переходы делают интерфейс отзывчивым. Кнопка увеличивается при наведении, создавая визуальную обратную связь.</div>
+            <div style="text-align: center;">
+                <div class="credit" id="creditText">© Alexandru Bejenaru</div>
             </div>
-        </div>
-        
-        <div class="slide slide-5">
-            <div class="slide-content">
-                <h2>⚙️ JavaScript функциональность</h2>
-                <p class="code-subtitle">Обработка событий и логика приложения</p>
-                <div class="code-block"><code><span class="code-comment">// Обмен валют</span>
-$('swap-btn').addEventListener('click', () => {
-  [fromCurrency, toCurrency] = 
-    [toCurrency, fromCurrency];
-  updateFlags();
-  calculate();
-});
-
-<span class="code-comment">// Автоматический расчет</span>
-$('amount-input')
-  .addEventListener('input', calculate);
-
-<span class="code-comment">// Изменение валюты</span>
-$('to-select').addEventListener('change', e => {
-  toCurrency = e.target.value;
-  calculate();
-});</code></div>
-                <div class="code-explanation"><strong>🎯 Логика:</strong> Деструктуризация массива обменивает значения валют. Event listeners срабатывают при вводе пользователя для моментального расчета.</div>
-            </div>
-        </div>
-        
-        <div class="slide slide-6">
-            <div class="slide-content">
-                <h2>🌟 Ключевые возможности</h2>
-                <p class="code-subtitle">API интеграция и обработка данных</p>
-                <div class="code-block"><code><span class="code-comment">// Получение курсов</span>
-async function fetchRates() {
-  const response = await fetch(API_URL);
-  const data = await response.json();
-  rates = data.rates;
-}
-
-<span class="code-comment">// Основной расчет</span>
-function calculate() {
-  const amount = $('amount-input').value;
-  const rate = rates[fromCurrency][toCurrency];
-  const result = amount * rate;
-  $('result').textContent = result.toFixed(2);
-}</code></div>
-                <div class="code-explanation"><strong>💡 Функциональность:</strong> fetchRates() получает актуальные курсы с API. Функция calculate() выполняет конвертацию в реальном времени с использованием async/await.</div>
-            </div>
-        </div>
-        
-        <div class="slide slide-7">
-            <h2>✅ Заключение</h2>
-            <p>Успешно разработано полнофункциональное веб-приложение</p>
-            <p>для конвертации валют с современным дизайном</p>
-            <div class="tech-box">
-                <p>🔧 <strong>Технологии:</strong> HTML5 • CSS3 • JavaScript ES6+</p>
-                <p>💻 <strong>Платформа:</strong> Web (Responsive Design)</p>
-                <p>⚡ <strong>Функциональность:</strong> Real-time Currency Conversion API</p>
-                <p>🎨 <strong>Дизайн:</strong> Современный пользовательский интерфейс</p>
-            </div>
-            <div class="thank-you">Спасибо за внимание! 🙏</div>
         </div>
     </div>
-    
-    <div class="controls">
-        <button class="nav-btn" onclick="previousSlide()">❮</button>
-        <div class="dots" id="dots-container"></div>
-        <span class="slide-counter"><span id="current">1</span>/7</span>
-        <button class="nav-btn" onclick="nextSlide()">❯</button>
-    </div>
-    
+
     <script>
-        let currentSlide = 1;
-        const totalSlides = 7;
-        
-        const dotsContainer = document.getElementById('dots-container');
-        for (let i = 1; i <= totalSlides; i++) {
-            const dot = document.createElement('div');
-            dot.className = 'dot' + (i === 1 ? ' active' : '');
-            dot.onclick = () => goToSlide(i);
-            dotsContainer.appendChild(dot);
+        const quotes = [
+            {
+                text: "We have two ears and one mouth so that we can listen twice as much as we speak.",
+                author: "Epictetus"
+            },
+            {
+                text: "The only way to do great work is to love what you do.",
+                author: "Steve Jobs"
+            },
+            {
+                text: "Innovation distinguishes between a leader and a follower.",
+                author: "Steve Jobs"
+            },
+            {
+                text: "Life is what happens when you're busy making other plans.",
+                author: "John Lennon"
+            },
+            {
+                text: "The future belongs to those who believe in the beauty of their dreams.",
+                author: "Eleanor Roosevelt"
+            },
+            {
+                text: "It is during our darkest moments that we must focus to see the light.",
+                author: "Aristotle"
+            },
+            {
+                text: "The only impossible journey is the one you never begin.",
+                author: "Tony Robbins"
+            },
+            {
+                text: "Success is not final, failure is not fatal.",
+                author: "Winston Churchill"
+            },
+            {
+                text: "Believe you can and you're halfway there.",
+                author: "Theodore Roosevelt"
+            },
+            {
+                text: "The best time to plant a tree was 20 years ago. The second best time is now.",
+                author: "Chinese Proverb"
+            }
+        ];
+
+        const quoteText = document.getElementById('quoteText');
+        const quoteAuthor = document.getElementById('quoteAuthor');
+        const newBtn = document.getElementById('newBtn');
+
+        function getRandomQuote() {
+            const randomIndex = Math.floor(Math.random() * quotes.length);
+            return quotes[randomIndex];
         }
-        
-        function showSlide(n) {
-            document.querySelectorAll('.slide').forEach((slide, index) => {
-                slide.classList.remove('active', 'prev');
-                if (index + 1 === n) slide.classList.add('active');
-                else if (index + 1 < n) slide.classList.add('prev');
-            });
-            
-            document.querySelectorAll('.dot').forEach((dot, index) => {
-                dot.classList.toggle('active', index + 1 === n);
-            });
-            
-            document.getElementById('current').textContent = n;
+
+        function displayQuote(quote) {
+            quoteText.textContent = quote.text;
+            quoteAuthor.textContent = `-${quote.author}`;
         }
-        
-        function nextSlide() {
-            currentSlide++;
-            if (currentSlide > totalSlides) currentSlide = totalSlides;
-            showSlide(currentSlide);
-        }
-        
-        function previousSlide() {
-            currentSlide--;
-            if (currentSlide < 1) currentSlide = 1;
-            showSlide(currentSlide);
-        }
-        
-        function goToSlide(n) {
-            currentSlide = n;
-            showSlide(currentSlide);
-        }
-        
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowRight') nextSlide();
-            if (e.key === 'ArrowLeft') previousSlide();
+
+        newBtn.addEventListener('click', () => {
+            const quote = getRandomQuote();
+            displayQuote(quote);
         });
-        
-        showSlide(currentSlide);
     </script>
 </body>
 </html>
